@@ -1,5 +1,30 @@
 import cv2
 
+def gstreamer_pipeline(
+    capture_width=1920,
+    capture_height=1080,
+    display_width=960,
+    display_height=540,
+    framerate=30,
+    flip_method=0,
+):
+    return (
+        "nvarguscamerasrc ! "
+        "video/x-raw(memory:NVMM), "
+        "width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! appsink drop=True"
+        % (
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
 
 
 def faceBox(faceNet,frame):
@@ -41,7 +66,7 @@ ageList = ['(0-2)', '(4-6)', '(8-12)', '(15-20)', '(25-32)', '(38-43)', '(48-53)
 genderList = ['Male', 'Female']
 
 
-video=cv2.VideoCapture(0)
+video=cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
 
 padding=20
 
@@ -58,6 +83,7 @@ while True:
 
 
         ageNet.setInput(blob)
+
         agePred=ageNet.forward()
         age=ageList[agePred[0].argmax()]
 
