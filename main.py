@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 
 def gstreamer_pipeline(
-    capture_width=640,
-    capture_height=480,
+    capture_width=1280,
+    capture_height=720,
     display_width=640,
     display_height=480,
     framerate=30,
